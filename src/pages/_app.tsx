@@ -5,8 +5,10 @@ import GameContextProvider from '../contexts/Game'
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <GameContextProvider>
-      <Component {...pageProps} />
-    </GameContextProvider>
+    <>
+      <GameContextProvider>
+        <Component {...pageProps} />
+      </GameContextProvider>
+    </>
   ) 
 }
