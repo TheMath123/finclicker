@@ -5,8 +5,8 @@ import Cookies from 'js-cookie';
 type GameContextData = {
   fincoins: number
   setFincoins: (coins: number) => void
-  miningCoin: () => void
-  enableAutoMessage: () => void
+  sendingMessageBird: () => void
+  enableAutoMining: () => void
 }
 
 export const GameContext = createContext({} as GameContextData)
@@ -29,39 +29,46 @@ type GameContextProviderProps = {
 export default function GameContextProvider({ children }: GameContextProviderProps){ //Component
   const [fincoins, setFincoins] = useState(0);
   const [bonus, setBonus] = useState(1);
-  const [features, setFeatures] = useState([])
+  const [autoMining, setAutoMining] = useState(false)
 
   useEffect(() => { //Salvando nos cookies
     Cookies.set('fincoins', String(fincoins));
     console.log(fincoins)
   }, [fincoins])
 
+  let variable = 0.6
+
+  function sendingMessageBird(){
+    setBonus(bonus * variable)
+    variable = variable * 0.3
+  }
 
   function miningCoin(){
-    setFincoins((fincoins + 1) * bonus)
+    setFincoins(fincoins + 1 * bonus)
   }
 
-  function enableAutoMessage(){
-    const item = { enableAutoMessage: true }
-    setFeatures([])
-    timerSetCoin(true, 1000) //1 Segundo
-  }
-
-  function timerSetCoin(enable: boolean, time: number){
-    while(enable){
-      setTimeout(() => {
-        miningCoin()
-      }, time)
+  function enableAutoMining(){
+    if(!autoMining){
+      setFincoins(fincoins - 100)
+      setAutoMining(true)
     }
   }
+
+  useEffect(() => { //Mineração de Fincoins
+    if(autoMining){
+      const timer = setTimeout(() => {
+        miningCoin()
+      }, 1000);
+    }
+  });
 
   return(
     <GameContext.Provider
       value={{
         fincoins,
         setFincoins,
-        miningCoin,
-        enableAutoMessage,
+        sendingMessageBird,
+        enableAutoMining,
       }}
     >
       { children }

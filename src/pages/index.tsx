@@ -4,25 +4,32 @@ import React, { useEffect, useRef } from 'react'
 import { useGame } from '../contexts/Game'
 import styles from '../styles/Home.module.scss'
 
+import messages from '../assets/menssages.json'
+
 type IndexProps = {
   coins: number
 }
 
 export default function Home({ coins }: IndexProps) {
-  const { fincoins, setFincoins, miningCoin, enableAutoMessage } = useGame()
+  const { fincoins, setFincoins, sendingMessageBird, enableAutoMining } = useGame()
   const btnAutoMessageRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     setFincoins(coins || 0)
   }, [coins, setFincoins])
 
-  useEffect(() => {
-    if(fincoins >=  100){
+  function handlerAutoMining(){
+    enableAutoMining()
+    btnAutoMessageRef.current?.removeAttribute('disabled')
+  }
+
+  function handlerSendingMessage(){
+    sendingMessageBird()
+    btnAutoMessageRef.current?.disabled
+    const timer = setTimeout(() => {
       btnAutoMessageRef.current?.removeAttribute('disabled')
-    }else{
-      btnAutoMessageRef.current?.disabled
-    }
-  }, [fincoins])
+    }, 5000);
+  }
 
   return (
     <>
@@ -30,7 +37,12 @@ export default function Home({ coins }: IndexProps) {
         <h3>Em construção...</h3>
         <main className={styles.main}>
           <span>Fincoin: ${fincoins}</span>
-          <button onClick={() => miningCoin()} >
+
+          <textarea disabled>
+            Manipulando mercado
+          </textarea>
+
+          <button onClick={() => handlerSendingMessage()} >
             <Image 
               src="/birdblue.png"
               alt="BirdBlue"
@@ -46,14 +58,13 @@ export default function Home({ coins }: IndexProps) {
           <h1>Loja</h1>
           <div className={styles.itens}>
             <button 
-              disabled
+              onClick={() => handlerAutoMining()}
               ref={btnAutoMessageRef}
-              onClick={enableAutoMessage}
             >
-              Auto message 
-              <span>$100</span>
+              Criando a FinCoorporation
+              <span>$10000</span>
             </button>
-            
+
             <button disabled onClick={() => alert('teste')}>WIP $X</button>
           </div>
         </footer>
